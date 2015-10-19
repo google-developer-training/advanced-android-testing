@@ -49,6 +49,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.example.android.testing.notes.custom.matcher.ImageViewHasDrawableMatcher.hasDrawable;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the add note screen.
@@ -83,23 +84,24 @@ public class AddNoteScreenTest {
 
     @Test
     public void addImageToNote_ShowsThumbnailInUi() {
-        // Create an Activity Result which can be used to stub the camera Intent
-        ActivityResult result = createImageCaptureActivityResultStub();
-        // If there is an Intent with ACTION_IMAGE_CAPTURE, intercept the Intent and respond with
-        // a stubbed result.
-        intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result);
-
-        // Check thumbnail view is not displayed
-        onView(withId(R.id.add_note_image_thumbnail)).check(matches(not(isDisplayed())));
-
-        selectTakeImageFromMenu();
-
-        // Check that the stubbed thumbnail is displayed in the UI
-        onView(withId(R.id.add_note_image_thumbnail))
-                .perform(scrollTo()) // Scroll to thumbnail
-                .check(matches(allOf(
-                        hasDrawable(), // Check ImageView has a drawable set with a custom matcher
-                        isDisplayed())));
+        fail("Implement in step 8");
+//        // Create an Activity Result which can be used to stub the camera Intent
+//        ActivityResult result = createImageCaptureActivityResultStub();
+//        // If there is an Intent with ACTION_IMAGE_CAPTURE, intercept the Intent and respond with
+//        // a stubbed result.
+//        intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result);
+//
+//        // Check thumbnail view is not displayed
+//        onView(withId(R.id.add_note_image_thumbnail)).check(matches(not(isDisplayed())));
+//
+//        selectTakeImageFromMenu();
+//
+//        // Check that the stubbed thumbnail is displayed in the UI
+//        onView(withId(R.id.add_note_image_thumbnail))
+//                .perform(scrollTo()) // Scroll to thumbnail
+//                .check(matches(allOf(
+//                        hasDrawable(), // Check ImageView has a drawable set with a custom matcher
+//                        isDisplayed())));
     }
 
     @Test
