@@ -16,12 +16,6 @@
 
 package com.example.android.testing.notes.notes;
 
-import com.example.android.testing.notes.Injection;
-import com.example.android.testing.notes.addnote.AddNoteActivity;
-import com.example.android.testing.notes.notedetail.NoteDetailActivity;
-import com.example.android.testing.notes.R;
-import com.example.android.testing.notes.data.Note;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +32,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.android.testing.notes.Injection;
+import com.example.android.testing.notes.R;
+import com.example.android.testing.notes.addnote.AddNoteActivity;
+import com.example.android.testing.notes.data.Note;
+import com.example.android.testing.notes.notedetail.NoteDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,6 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mListAdapter = new NotesAdapter(new ArrayList<Note>(0), mItemListener);
-        mActionsListener = new NotesPresenter(Injection.provideNotesRepository(), this);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        mActionsListener = new NotesPresenter(Injection.provideNotesRepository(), this);
         setRetainInstance(true);
     }
 
