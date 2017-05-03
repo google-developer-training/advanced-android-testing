@@ -16,13 +16,11 @@
 
 package com.example.android.testing.notes.notes;
 
-import com.google.common.collect.Lists;
-
 import com.example.android.testing.notes.data.Note;
 import com.example.android.testing.notes.data.NotesRepository;
 import com.example.android.testing.notes.data.NotesRepository.LoadNotesCallback;
+import com.google.common.collect.Lists;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -33,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.fail;
+import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -84,7 +82,9 @@ public class NotesPresenterTest {
 //        mLoadNotesCallbackCaptor.getValue().onNotesLoaded(NOTES);
 //
 //        // Then progress indicator is hidden and notes are shown in UI
-//        verify(mNotesView).setProgressIndicator(false);
+//        InOrder inOrder = Mockito.inOrder(mNotesView);
+//        inOrder.verify(mNotesView).setProgressIndicator(true);
+//        inOrder.verify(mNotesView).setProgressIndicator(false);
 //        verify(mNotesView).showNotes(NOTES);
     }
 
