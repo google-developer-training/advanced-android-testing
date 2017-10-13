@@ -37,6 +37,11 @@ public class NotesActivityTest {
     }
 
     @Test
+    public void actionBar_hasNotesTitle() {
+        assertThat(activity.getSupportActionBar().getTitle().toString(), is(equalTo("Notes")));
+    }
+
+    @Test
     public void clickOnStatisticsNavigationItem_showsStatisticsScreen() {
         openDrawer();
 
@@ -44,6 +49,7 @@ public class NotesActivityTest {
         NavigationView navigationView = (NavigationView) activity.findViewById(R.id.nav_view);
         MenuItem item = navigationView.getMenu().findItem(R.id.statistics_navigation_menu_item);
 
+        // TODO(fbertault): Create a shadow?
         NavigationView.OnNavigationItemSelectedListener listener =
                 ReflectionHelpers.getField(navigationView, "mListener");
         listener.onNavigationItemSelected(item);

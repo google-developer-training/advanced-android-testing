@@ -2,7 +2,6 @@ package com.example.android.testing.notes.notes;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.TextView;
@@ -13,29 +12,27 @@ import com.example.android.testing.notes.addnote.AddNoteActivity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowActivity;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startVisibleFragment;
 
 
-/**
- * Robolectric tests for {@link NotesActivity}.
- */
+/** Robolectric tests for {@link NotesFragment}. */
 @RunWith(RobolectricTestRunner.class)
 public class NotesFragmentTest {
     private NotesFragment fragment;
 
     @Before
     public void setUp() {
-        fragment = NotesFragment.newInstance();
-        startVisibleFragment(fragment, NotesActivity.class, R.id.contentFrame);
+        // NotesActivity.onCreate creates the fragment, so we cannot use startVisibleFragment.
+        fragment = (NotesFragment) Robolectric.setupActivity(NotesActivity.class)
+                .getSupportFragmentManager().getFragments().get(0);
     }
 
     @Test
@@ -57,7 +54,6 @@ public class NotesFragmentTest {
                 Activity.RESULT_OK,
                 new Intent());
         TextView snackbarText = fragment.getActivity().getWindow().findViewById(R.id.snackbar_text);
-        assertThat(snackbarText, is(notNullValue()));
         assertThat(snackbarText.getText().toString(), is("Note saved"));
     }
 

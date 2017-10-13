@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Unit tests for the implementation of {@link NoteDetailPresenter}
  */
-public class NotesDetailPresenterTest {
+public class NoteDetailPresenterTest {
 
     public static final String INVALID_ID = "INVALID_ID";
 
