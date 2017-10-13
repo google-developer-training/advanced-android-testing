@@ -21,13 +21,15 @@ import android.support.v4.util.ArrayMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of the Notes Service API that adds a latency simulating network.
  */
 public class NotesServiceApiImpl implements NotesServiceApi {
 
-    private static final int SERVICE_LATENCY_IN_MILLIS = 2000;
+    private static final long SERVICE_LATENCY_IN_MILLIS = TimeUnit.SECONDS.toMillis(1);
+
     private static final ArrayMap<String, Note> NOTES_SERVICE_DATA =
             NotesServiceApiEndpoint.loadPersistedNotes();
 
@@ -46,9 +48,14 @@ public class NotesServiceApiImpl implements NotesServiceApi {
 
     @Override
     public void getNote(final String noteId, final NotesServiceCallback callback) {
-        //TODO: Add network latency here too.
-        Note note = NOTES_SERVICE_DATA.get(noteId);
-        callback.onLoaded(note);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Note note = NOTES_SERVICE_DATA.get(noteId);
+                callback.onLoaded(note);
+            }
+        }, SERVICE_LATENCY_IN_MILLIS);
     }
 
     @Override
