@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -113,7 +113,7 @@ public class NoteDetailScreenTest {
      */
     @After
     public void unregisterIdlingResource() {
-        Espresso.unregisterIdlingResources(
+        IdlingRegistry.getInstance().unregister(
                 mNoteDetailActivityTestRule.getActivity().getCountingIdlingResource());
     }
 
@@ -123,7 +123,7 @@ public class NoteDetailScreenTest {
      * synchronize your test actions, which makes tests significantly more reliable.
      */
     private void registerIdlingResource() {
-        Espresso.registerIdlingResources(
+        IdlingRegistry.getInstance().register(
                 mNoteDetailActivityTestRule.getActivity().getCountingIdlingResource());
     }
 }
