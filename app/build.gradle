@@ -21,13 +21,16 @@ android {
         }
     }
 
+    flavorDimensions "tier"
+
     // If you need to add more flavors, consider using flavor dimensions.
     productFlavors {
         mock {
             applicationIdSuffix = ".mock"
+            dimension "tier"
         }
         prod {
-
+            dimension "tier"
         }
     }
 
