@@ -16,7 +16,6 @@
 
 package com.example.android.testing.notes.util;
 
-import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.VisibleForTesting;
 
@@ -51,12 +50,20 @@ public class ImageFileImpl implements ImageFile {
 
     @Override
     public void delete() {
+        if (mImageFile == null) {
+            return;
+        }
+        mImageFile.delete();
         mImageFile = null;
     }
 
     @Override
     public String getPath() {
-        return Uri.fromFile(mImageFile).toString();
+      return mImageFile.getAbsolutePath();
     }
 
+    @Override
+    public String getPathUrl() {
+      return "file://" + mImageFile.getAbsolutePath();
+    }
 }

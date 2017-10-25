@@ -16,6 +16,8 @@
 
 package com.example.android.testing.notes.util;
 
+import android.os.Environment;
+
 import java.io.IOException;
 
 /**
@@ -30,6 +32,12 @@ public class FakeImageFileImpl extends ImageFileImpl {
 
     @Override
     public String getPath() {
+        return Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).getAbsolutePath();
+    }
+
+    @Override
+    public String getPathUrl() {
         return "file:///android_asset/atsl-logo.png";
     }
 

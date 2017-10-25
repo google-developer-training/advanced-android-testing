@@ -29,4 +29,6 @@ public interface ImageFile {
     void delete();
 
     String getPath();
+
+    String getPathUrl();
 }

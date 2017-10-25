@@ -75,7 +75,7 @@ public class AddNotePresenter implements AddNoteContract.UserActionsListener {
     @Override
     public void imageAvailable() {
         if (mImageFile.exists()) {
-            mAddNoteView.showImagePreview(mImageFile.getPath());
+            mAddNoteView.showImagePreview(mImageFile.getPathUrl());
         } else {
             imageCaptureFailed();
         }

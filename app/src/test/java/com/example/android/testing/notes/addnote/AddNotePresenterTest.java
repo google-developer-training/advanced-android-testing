@@ -92,9 +92,9 @@ public class AddNotePresenterTest {
     @Test
     public void imageAvailable_SavesImageAndUpdatesUiWithThumbnail() {
         // Given an a stubbed image file
-        String imageUrl = "path/to/file";
+        String imageUrl = "file://path/to/file";
         when(mImageFile.exists()).thenReturn(true);
-        when(mImageFile.getPath()).thenReturn(imageUrl);
+        when(mImageFile.getPathUrl()).thenReturn(imageUrl);
 
         // When an image is made available to the presenter
         mAddNotesPresenter.imageAvailable();

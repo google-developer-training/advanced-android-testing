@@ -14,17 +14,11 @@ android {
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
-    buildTypes {
-        debug {
-            // Run code coverage reports by default on debug builds.
-            // testCoverageEnabled = true
-        }
-    }
+    flavorDimensions "default"
 
     // If you need to add more flavors, consider using flavor dimensions.
     productFlavors {
         mock {
-            applicationIdSuffix = ".mock"
         }
         prod {
 
@@ -39,10 +33,14 @@ android {
         }
     }
 
-    // Always show the result of every unit test, even if it passes.
-    testOptions.unitTests.all {
-        testLogging {
-            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                testLogging {
+                    events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                }
+            }
         }
     }
 }
@@ -63,11 +61,9 @@ dependencies {
     compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.ext.espressoVersion"
 
     // Dependencies for local unit tests
-    testCompile "junit:junit:$rootProject.ext.junitVersion"
-    testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
-    testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
-    testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
-    testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
+    testImplementation "junit:junit:$rootProject.ext.junitVersion"
+    testImplementation "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testImplementation "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
 
     // Android Testing Support Library's runner and rules
     androidTestCompile "com.android.support.test:runner:$rootProject.ext.runnerVersion"
@@ -77,6 +73,10 @@ dependencies {
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-contrib:$rootProject.ext.espressoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$rootProject.ext.espressoVersion"
+
+    // Robolectric Testing dependencies.
+    testImplementation "org.robolectric:robolectric:3.4.2"
+    testImplementation "org.robolectric:shadows-support-v4:3.4-rc2"
 }
 
 /*
@@ -85,17 +85,5 @@ dependencies. This is required since Espresso internally has a dependency on sup
 */
 configurations.all {
     resolutionStrategy.force "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
-}
-
-/*
-All direct/transitive dependencies shared between your test and production APKs need to be
-excluded from the test APK! This is necessary because both APKs will contain the same classes. Not
-excluding these dependencies from your test configuration will result in an dex pre-verifier error
-at runtime. More info in this tools bug: (https://code.google.com/p/android/issues/detail?id=192497)
-*/
-configurations.compile.dependencies.each { compileDependency ->
-    println "Excluding compile dependency: ${compileDependency.getName()}"
-    configurations.androidTestCompile.dependencies.each { androidTestCompileDependency ->
-        configurations.androidTestCompile.exclude module: "${compileDependency.getName()}"
-    }
+    resolutionStrategy.force "com.google.guava:guava:$rootProject.guavaVersion"
 }

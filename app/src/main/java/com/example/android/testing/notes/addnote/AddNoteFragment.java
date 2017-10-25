@@ -16,17 +16,10 @@
 
 package com.example.android.testing.notes.addnote;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.example.android.testing.notes.Injection;
-import com.example.android.testing.notes.R;
-import com.example.android.testing.notes.util.EspressoIdlingResource;
-
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +28,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +40,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.example.android.testing.notes.Injection;
+import com.example.android.testing.notes.R;
+import com.example.android.testing.notes.util.EspressoIdlingResource;
+
+import java.io.File;
 import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -56,6 +61,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class AddNoteFragment extends Fragment implements AddNoteContract.View {
 
     public static final int REQUEST_CODE_IMAGE_CAPTURE = 0x1001;
+    private static final int REQUEST_TAKE_PICTURE = 1;
 
     private AddNoteContract.UserActionsListener mActionListener;
 
@@ -106,14 +112,40 @@ public class AddNoteFragment extends Fragment implements AddNoteContract.View {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_TAKE_PICTURE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    try {
+                        mActionListener.takePicture();
+                    } catch (IOException e) {
+                        showImageError();
+                    }
+                } else {
+                    showImageError();
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.take_picture:
-                try {
-                    mActionListener.takePicture();
-                } catch (IOException ioe) {
-                    if (getView() != null) {
-                        Snackbar.make(getView(), getString(R.string.take_picture_error),
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_TAKE_PICTURE);
+                } else {
+                    try {
+                        mActionListener.takePicture();
+                    } catch (IOException ioe) {
+                        showImageError();
+                        Snackbar.make(mTitle, getString(R.string.take_picture_error),
                                 Snackbar.LENGTH_LONG).show();
                     }
                 }
@@ -145,11 +177,13 @@ public class AddNoteFragment extends Fragment implements AddNoteContract.View {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Check if there is a camera app installed to handle our Intent
         if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.parse(saveTo));
+            Uri path = FileProvider.getUriForFile(getContext(),
+                    "com.example.android.testing.notes.fileprovider",
+                    new File(saveTo));
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, path);
             startActivityForResult(takePictureIntent, REQUEST_CODE_IMAGE_CAPTURE);
         } else {
-            Snackbar.make(mTitle, getString(R.string.cannot_connect_to_camera_message),
-                    Snackbar.LENGTH_SHORT).show();
+            showImageError();
         }
     }
 

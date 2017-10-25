@@ -16,6 +16,7 @@
 
 package com.example.android.testing.notes.addnote;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityResult;
 import android.provider.MediaStore;
@@ -23,6 +24,7 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.android.testing.notes.R;
@@ -56,6 +58,8 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class AddNoteScreenTest {
+    @Rule public GrantPermissionRule mRuntimePermissionRule =
+            GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     /**
      * {@link IntentsTestRule} is an {@link ActivityTestRule} which inits and releases Espresso
