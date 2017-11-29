@@ -25,7 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -72,30 +74,31 @@ public class NotesPresenterTest {
 
     @Test
     public void loadNotesFromRepositoryAndLoadIntoView() {
-        fail("Implement in step 6");
-//        // Given an initialized NotesPresenter with initialized notes
-//        // When loading of Notes is requested
-//        mNotesPresenter.loadNotes(true);
-//
-//        // Callback is captured and invoked with stubbed notes
-//        verify(mNotesRepository).getNotes(mLoadNotesCallbackCaptor.capture());
-//        mLoadNotesCallbackCaptor.getValue().onNotesLoaded(NOTES);
-//
-//        // Then progress indicator is hidden and notes are shown in UI
+//        fail("Implement in step 6");
+        // Given an initialized NotesPresenter with initialized notes
+        // When loading of Notes is requested
+        mNotesPresenter.loadNotes(true);
+
+        // Callback is captured and invoked with stubbed notes
+        verify(mNotesRepository).getNotes(mLoadNotesCallbackCaptor.capture());
+        mLoadNotesCallbackCaptor.getValue().onNotesLoaded(NOTES);
+
+        // Then progress indicator is hidden and notes are shown in UI
 //        InOrder inOrder = Mockito.inOrder(mNotesView);
 //        inOrder.verify(mNotesView).setProgressIndicator(true);
 //        inOrder.verify(mNotesView).setProgressIndicator(false);
-//        verify(mNotesView).showNotes(NOTES);
+        verify(mNotesView).setProgressIndicator(false);
+        verify(mNotesView).showNotes(NOTES);
     }
 
     @Test
     public void clickOnFab_ShowsAddsNoteUi() {
-        fail("Implement in step 6");
-//        // When adding a new note
-//        mNotesPresenter.addNewNote();
+        //fail("Implement in step 6");
+        // When adding a new note
+        mNotesPresenter.addNewNote();
 //
-//        // Then add note UI is shown
-//        verify(mNotesView).showAddNote();
+        // Then add note UI is shown
+        verify(mNotesView).showAddNote();
     }
 
     @Test
