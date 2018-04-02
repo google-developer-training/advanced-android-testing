@@ -107,6 +107,6 @@ public class NotesPresenterTest {
         mNotesPresenter.openNoteDetails(requestedNote);
 
         // Then note detail UI is shown
-        verify(mNotesView).showNoteDetailUi(any(String.class));
+        verify(mNotesView).showNoteDetailUi(requestedNote.getId());
     }
 }
