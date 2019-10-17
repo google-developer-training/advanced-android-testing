@@ -16,29 +16,23 @@
 
 package com.example.android.architecture.blueprints.todoapp.addedittask
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.DefaultTasksRepository
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the Add/Edit screen.
- *
- *
- * This ViewModel only exposes [ObservableField]s, so it doesn't need to extend
- * [androidx.databinding.BaseObservable] and updates are notified automatically. See
- * [com.example.android.architecture.blueprints.todoapp.statistics.StatisticsViewModel] for
- * how to deal with more complex scenarios.
  */
-class AddEditTaskViewModel(
-    private val tasksRepository: TasksRepository
-) : ViewModel() {
+class AddEditTaskViewModel(application: Application) : AndroidViewModel(application) {
+
+    // Note, for testing and architecture purposes, it's bad practice to construct the repository
+    // here. We'll show you how to fix this during the codelab
+    private val tasksRepository = DefaultTasksRepository.getRepository(application)
 
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String>()
@@ -47,13 +41,13 @@ class AddEditTaskViewModel(
     val description = MutableLiveData<String>()
 
     private val _dataLoading = MutableLiveData<Boolean>()
-    val dataLoading: LiveData<Boolean> =_dataLoading
+    val dataLoading: LiveData<Boolean> = _dataLoading
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+    val snackbarText: LiveData<Event<Int>> = _snackbarText
 
-    private val _taskUpdated = MutableLiveData<Event<Unit>>()
-    val taskUpdatedEvent: LiveData<Event<Unit>> = _taskUpdated
+    private val _taskUpdatedEvent = MutableLiveData<Event<Unit>>()
+    val taskUpdatedEvent: LiveData<Event<Unit>> = _taskUpdatedEvent
 
     private var taskId: String? = null
 
@@ -64,10 +58,10 @@ class AddEditTaskViewModel(
     private var taskCompleted = false
 
     fun start(taskId: String?) {
-        _dataLoading.value?.let { isLoading ->
-            // Already loading, ignore.
-            if (isLoading) return
+        if (_dataLoading.value == true) {
+            return
         }
+
         this.taskId = taskId
         if (taskId == null) {
             // No need to populate, it's a new task
@@ -78,6 +72,7 @@ class AddEditTaskViewModel(
             // No need to populate, already have data.
             return
         }
+
         isNewTask = false
         _dataLoading.value = true
 
@@ -110,11 +105,11 @@ class AddEditTaskViewModel(
         val currentDescription = description.value
 
         if (currentTitle == null || currentDescription == null) {
-            _snackbarText.value =  Event(R.string.empty_task_message)
+            _snackbarText.value = Event(R.string.empty_task_message)
             return
         }
         if (Task(currentTitle, currentDescription).isEmpty) {
-            _snackbarText.value =  Event(R.string.empty_task_message)
+            _snackbarText.value = Event(R.string.empty_task_message)
             return
         }
 
@@ -129,7 +124,7 @@ class AddEditTaskViewModel(
 
     private fun createTask(newTask: Task) = viewModelScope.launch {
         tasksRepository.saveTask(newTask)
-        _taskUpdated.value = Event(Unit)
+        _taskUpdatedEvent.value = Event(Unit)
     }
 
     private fun updateTask(task: Task) {
@@ -138,7 +133,7 @@ class AddEditTaskViewModel(
         }
         viewModelScope.launch {
             tasksRepository.saveTask(task)
-            _taskUpdated.value = Event(Unit)
+            _taskUpdatedEvent.value = Event(Unit)
         }
     }
 }

@@ -15,6 +15,8 @@
  */
 package com.example.android.architecture.blueprints.todoapp.data.source.local
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Error
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
@@ -28,14 +30,34 @@ import kotlinx.coroutines.withContext
  * Concrete implementation of a data source as a db.
  */
 class TasksLocalDataSource internal constructor(
-        private val tasksDao: TasksDao,
+    private val tasksDao: TasksDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TasksDataSource {
+
+    override fun observeTasks(): LiveData<Result<List<Task>>> {
+        return tasksDao.observeTasks().map {
+            Success(it)
+        }
+    }
+
+    override fun observeTask(taskId: String): LiveData<Result<Task>> {
+        return tasksDao.observeTaskById(taskId).map {
+            Success(it)
+        }
+    }
+
+    override suspend fun refreshTask(taskId: String) {
+        //NO-OP
+    }
+
+    override suspend fun refreshTasks() {
+        //NO-OP
+    }
 
     override suspend fun getTasks(): Result<List<Task>> = withContext(ioDispatcher) {
         return@withContext try {
             Success(tasksDao.getTasks())
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Error(e)
         }
     }
@@ -62,8 +84,7 @@ class TasksLocalDataSource internal constructor(
     }
 
     override suspend fun completeTask(taskId: String) {
-        // Not required for the local data source because the {@link DefaultTasksRepository} handles
-        // converting from a {@code taskId} to a {@link task} using its cached data.
+        tasksDao.updateCompleted(taskId, true)
     }
 
     override suspend fun activateTask(task: Task) = withContext(ioDispatcher) {
@@ -71,8 +92,7 @@ class TasksLocalDataSource internal constructor(
     }
 
     override suspend fun activateTask(taskId: String) {
-        // Not required for the local data source because the {@link DefaultTasksRepository} handles
-        // converting from a {@code taskId} to a {@link task} using its cached data.
+        tasksDao.updateCompleted(taskId, false)
     }
 
     override suspend fun clearCompletedTasks() = withContext<Unit>(ioDispatcher) {

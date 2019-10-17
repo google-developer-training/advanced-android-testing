@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.StatisticsFragBinding
-import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
 
 /**
  * Main UI for the statistics screen.
@@ -32,24 +33,23 @@ class StatisticsFragment : Fragment() {
 
     private lateinit var viewDataBinding: StatisticsFragBinding
 
-    private lateinit var statisticsViewModel: StatisticsViewModel
+    private val viewModel by viewModels<StatisticsViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
-        viewDataBinding = DataBindingUtil.inflate(inflater, R.layout.statistics_frag, container,
-                false)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        viewDataBinding = DataBindingUtil.inflate(
+            inflater, R.layout.statistics_frag, container,
+            false
+        )
         return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        statisticsViewModel = obtainViewModel(StatisticsViewModel::class.java)
-        viewDataBinding.stats = statisticsViewModel
+        viewDataBinding.viewmodel = viewModel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
-    }
-
-    override fun onResume() {
-        super.onResume()
-        statisticsViewModel.start()
+        this.setupRefreshLayout(viewDataBinding.refreshLayout)
     }
 }

@@ -16,83 +16,46 @@
 
 package com.example.android.architecture.blueprints.todoapp.statistics
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
+import com.example.android.architecture.blueprints.todoapp.data.Result
+import com.example.android.architecture.blueprints.todoapp.data.Result.Error
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
-import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
+import com.example.android.architecture.blueprints.todoapp.data.source.DefaultTasksRepository
 import kotlinx.coroutines.launch
 
 /**
- * Exposes the data to be used in the statistics screen.
- *
- *
- * This ViewModel uses both [ObservableField]s ([ObservableBoolean]s in this case) and
- * [Bindable] getters. The values in [ObservableField]s are used directly in the layout,
- * whereas the [Bindable] getters allow us to add some logic to it. This is
- * preferable to having logic in the XML layout.
+ * ViewModel for the statistics screen.
  */
-class StatisticsViewModel(
-    private val tasksRepository: TasksRepository
-) : ViewModel() {
+class StatisticsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _dataLoading = MutableLiveData<Boolean>()
-    val dataLoading: LiveData<Boolean> = _dataLoading
+    // Note, for testing and architecture purposes, it's bad practice to construct the repository
+    // here. We'll show you how to fix this during the codelab
+    private val tasksRepository = DefaultTasksRepository.getRepository(application)
 
-    private val _error = MutableLiveData<Boolean>()
-    val error: LiveData<Boolean> = _error
-
-    /**
-     * Controls whether the stats are shown or a "No data" message.
-     */
-    private val _empty = MutableLiveData<Boolean>()
-    val empty: LiveData<Boolean> = _empty
-
-    private val _activeTasksPercent = MutableLiveData<Float>()
-    val activeTasksPercent: LiveData<Float> = _activeTasksPercent
-
-    private val _completedTasksPercent = MutableLiveData<Float>()
-    val completedTasksPercent: LiveData<Float> = _completedTasksPercent
-
-    private var activeTasks = 0
-
-    private var completedTasks = 0
-
-    fun start() {
-        _dataLoading.value = true
-
-        // Espresso does not work well with coroutines yet. See
-        // https://github.com/Kotlin/kotlinx.coroutines/issues/982
-        EspressoIdlingResource.increment() // Set app as busy.
-
-        viewModelScope.launch {
-            tasksRepository.getTasks().let { result ->
-                if (result is Success) {
-                    _error.value = false
-                    computeStats(result.data)
-                } else {
-                    _error.value = true
-                    activeTasks = 0
-                    completedTasks = 0
-                    computeStats(null)
-                }
-            }
+    private val tasks: LiveData<Result<List<Task>>> = tasksRepository.observeTasks()
+    private val _dataLoading = MutableLiveData<Boolean>(false)
+    private val stats: LiveData<StatsResult?> = tasks.map {
+        if (it is Success) {
+            getActiveAndCompletedStats(it.data)
+        } else {
+            null
         }
     }
 
-    /**
-     * Called when new data is ready.
-     */
-    private fun computeStats(tasks: List<Task>?) {
-        getActiveAndCompletedStats(tasks).let {
-            _activeTasksPercent.value = it.activeTasksPercent
-            _completedTasksPercent.value = it.completedTasksPercent
-        }
-        _empty.value = tasks.isNullOrEmpty()
-        _dataLoading.value = false
-        EspressoIdlingResource.decrement() // Set app as idle.
+    val activeTasksPercent = stats.map {
+        it?.activeTasksPercent ?: 0f }
+    val completedTasksPercent: LiveData<Float> = stats.map { it?.completedTasksPercent ?: 0f }
+    val dataLoading: LiveData<Boolean> = _dataLoading
+    val error: LiveData<Boolean> = tasks.map { it is Error }
+    val empty: LiveData<Boolean> = tasks.map { (it as? Success)?.data.isNullOrEmpty() }
+
+    fun refresh() {
+        _dataLoading.value = true
+            viewModelScope.launch {
+                tasksRepository.refreshTasks()
+                _dataLoading.value = false
+            }
     }
 }

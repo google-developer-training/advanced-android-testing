@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 package com.example.android.architecture.blueprints.todoapp.util
 
 /**
- * Extension functions for View and subclasses of View.
+ * Extension functions and Binding Adapters.
  */
 
 import android.view.View
-import androidx.databinding.BindingAdapter
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.Event
+import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -35,15 +35,6 @@ import com.google.android.material.snackbar.Snackbar
  */
 fun View.showSnackbar(snackbarText: String, timeLength: Int) {
     Snackbar.make(this, snackbarText, timeLength).run {
-        addCallback(object: Snackbar.Callback() {
-            override fun onShown(sb: Snackbar?) {
-                EspressoIdlingResource.increment()
-            }
-
-            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                EspressoIdlingResource.decrement()
-            }
-        })
         show()
     }
 }
@@ -64,13 +55,17 @@ fun View.setupSnackbar(
     })
 }
 
-/**
- * Reloads the data when the pull-to-refresh is triggered.
- *
- * Creates the `android:onRefresh` for a [SwipeRefreshLayout].
- */
-@BindingAdapter("android:onRefresh")
-fun ScrollChildSwipeRefreshLayout.setSwipeRefreshLayoutOnRefreshListener(
-        viewModel: TasksViewModel) {
-    setOnRefreshListener { viewModel.loadTasks(true) }
+fun Fragment.setupRefreshLayout(
+    refreshLayout: ScrollChildSwipeRefreshLayout,
+    scrollUpChild: View? = null
+) {
+    refreshLayout.setColorSchemeColors(
+        ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
+        ContextCompat.getColor(requireActivity(), R.color.colorAccent),
+        ContextCompat.getColor(requireActivity(), R.color.colorPrimaryDark)
+    )
+    // Set the scrolling view in the custom SwipeRefreshLayout.
+    scrollUpChild?.let {
+        refreshLayout.scrollUpChild = it
+    }
 }

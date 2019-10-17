@@ -15,64 +15,61 @@
  */
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
+import android.app.Application
 import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
-import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
+import com.example.android.architecture.blueprints.todoapp.data.source.DefaultTasksRepository
 import kotlinx.coroutines.launch
 
 /**
- * Listens to user actions from the list item in ([TasksFragment]) and redirects them to the
- * Fragment's actions listener.
+ * ViewModel for the Details screen.
  */
-class TaskDetailViewModel(
-    private val tasksRepository: TasksRepository
-) : ViewModel() {
+class TaskDetailViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _task = MutableLiveData<Task>()
-    val task: LiveData<Task> = _task
+    // Note, for testing and architecture purposes, it's bad practice to construct the repository
+    // here. We'll show you how to fix this during the codelab
+    private val tasksRepository = DefaultTasksRepository.getRepository(application)
 
-    private val _isDataAvailable = MutableLiveData<Boolean>()
-    val isDataAvailable: LiveData<Boolean> = _isDataAvailable
+    private val _taskId = MutableLiveData<String>()
+
+    private val _task = _taskId.switchMap { taskId ->
+        tasksRepository.observeTask(taskId).map { computeResult(it) }
+    }
+    val task: LiveData<Task?> = _task
+
+    val isDataAvailable: LiveData<Boolean> = _task.map { it != null }
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
-    private val _editTaskCommand = MutableLiveData<Event<Unit>>()
-    val editTaskCommand: LiveData<Event<Unit>> = _editTaskCommand
+    private val _editTaskEvent = MutableLiveData<Event<Unit>>()
+    val editTaskEvent: LiveData<Event<Unit>> = _editTaskEvent
 
-    private val _deleteTaskCommand = MutableLiveData<Event<Unit>>()
-    val deleteTaskCommand: LiveData<Event<Unit>> = _deleteTaskCommand
+    private val _deleteTaskEvent = MutableLiveData<Event<Unit>>()
+    val deleteTaskEvent: LiveData<Event<Unit>> = _deleteTaskEvent
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+    val snackbarText: LiveData<Event<Int>> = _snackbarText
 
     // This LiveData depends on another so we can use a transformation.
-    val completed: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
+    val completed: LiveData<Boolean> = _task.map { input: Task? ->
         input?.isCompleted ?: false
     }
 
-    val taskId: String?
-        get() = _task.value?.id
-
     fun deleteTask() = viewModelScope.launch {
-        taskId?.let {
+        _taskId.value?.let {
             tasksRepository.deleteTask(it)
-            _deleteTaskCommand.value = Event(Unit)
+            _deleteTaskEvent.value = Event(Unit)
         }
     }
 
     fun editTask() {
-        _editTaskCommand.value = Event(Unit)
+        _editTaskEvent.value = Event(Unit)
     }
 
     fun setCompleted(completed: Boolean) = viewModelScope.launch {
@@ -87,43 +84,33 @@ class TaskDetailViewModel(
     }
 
     fun start(taskId: String?) {
-        _dataLoading.value = true
+        // If we're already loading or already loaded, return (might be a config change)
+        if (_dataLoading.value == true || taskId == _taskId.value) {
+            return
+        }
+        // Trigger the load
+        _taskId.value = taskId
+    }
 
-        // Espresso does not work well with coroutines yet. See
-        // https://github.com/Kotlin/kotlinx.coroutines/issues/982
-        EspressoIdlingResource.increment() // Set app as busy.
-
-        viewModelScope.launch {
-            if (taskId != null) {
-                tasksRepository.getTask(taskId, false).let { result ->
-                    if (result is Success) {
-                        onTaskLoaded(result.data)
-                    } else {
-                        onDataNotAvailable(result)
-                    }
-                }
-            }
-            _dataLoading.value = false
-            EspressoIdlingResource.decrement() // Set app as idle.
+    private fun computeResult(taskResult: Result<Task>): Task? {
+        return if (taskResult is Success) {
+            taskResult.data
+        } else {
+            showSnackbarMessage(R.string.loading_tasks_error)
+            null
         }
     }
 
-    private fun setTask(task: Task?) {
-        this._task.value = task
-        _isDataAvailable.value = task != null
-    }
 
-    private fun onTaskLoaded(task: Task) {
-        setTask(task)
-    }
-
-    private fun onDataNotAvailable(result: Result<Task>) {
-        _task.value = null
-        _isDataAvailable.value = false
-    }
-
-    fun onRefresh() {
-        taskId?.let { start(it) }
+    fun refresh() {
+        // Refresh the repository and the task will be updated automatically.
+        _task.value?.let {
+            _dataLoading.value = true
+            viewModelScope.launch {
+                tasksRepository.refreshTask(it.id)
+                _dataLoading.value = false
+            }
+        }
     }
 
     private fun showSnackbarMessage(@StringRes message: Int) {

@@ -15,39 +15,42 @@
  */
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.app.Application
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.source.DefaultTasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
-import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 
 /**
- * Exposes the data to be used in the task list screen.
- *
- *
- * [BaseObservable] implements a listener registration mechanism which is notified when a
- * property changes. This is done by assigning a [Bindable] annotation to the property's
- * getter method.
+ * ViewModel for the task list screen.
  */
-class TasksViewModel(
-    private val tasksRepository: TasksRepository
-) : ViewModel() {
+class TasksViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
+    // Note, for testing and architecture purposes, it's bad practice to construct the repository
+    // here. We'll show you how to fix this during the codelab
+    private val tasksRepository = DefaultTasksRepository.getRepository(application)
+
+    private val _forceUpdate = MutableLiveData<Boolean>(false)
+
+    private val _items: LiveData<List<Task>> = _forceUpdate.switchMap { forceUpdate ->
+        if (forceUpdate) {
+            _dataLoading.value = true
+            viewModelScope.launch {
+                tasksRepository.refreshTasks()
+                _dataLoading.value = false
+            }
+        }
+        tasksRepository.observeTasks().switchMap { filterTasks(it) }
+
+    }
+
     val items: LiveData<List<Task>> = _items
 
     private val _dataLoading = MutableLiveData<Boolean>()
@@ -66,9 +69,9 @@ class TasksViewModel(
     val tasksAddViewVisible: LiveData<Boolean> = _tasksAddViewVisible
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+    val snackbarText: LiveData<Event<Int>> = _snackbarText
 
-    private var _currentFiltering = TasksFilterType.ALL_TASKS
+    private var currentFiltering = TasksFilterType.ALL_TASKS
 
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
@@ -79,6 +82,8 @@ class TasksViewModel(
     private val _newTaskEvent = MutableLiveData<Event<Unit>>()
     val newTaskEvent: LiveData<Event<Unit>> = _newTaskEvent
 
+    private var resultMessageShown: Boolean = false
+
     // This LiveData depends on another so we can use a transformation.
     val empty: LiveData<Boolean> = Transformations.map(_items) {
         it.isEmpty()
@@ -87,6 +92,7 @@ class TasksViewModel(
     init {
         // Set initial state
         setFiltering(TasksFilterType.ALL_TASKS)
+        loadTasks(true)
     }
 
     /**
@@ -97,27 +103,37 @@ class TasksViewModel(
      * [TasksFilterType.ACTIVE_TASKS]
      */
     fun setFiltering(requestType: TasksFilterType) {
-        _currentFiltering = requestType
+        currentFiltering = requestType
 
         // Depending on the filter type, set the filtering label, icon drawables, etc.
         when (requestType) {
             TasksFilterType.ALL_TASKS -> {
-                setFilter(R.string.label_all, R.string.no_tasks_all,
-                    R.drawable.logo_no_fill, true)
+                setFilter(
+                    R.string.label_all, R.string.no_tasks_all,
+                    R.drawable.logo_no_fill, true
+                )
             }
             TasksFilterType.ACTIVE_TASKS -> {
-                setFilter(R.string.label_active, R.string.no_tasks_active,
-                    R.drawable.ic_check_circle_96dp, false)
+                setFilter(
+                    R.string.label_active, R.string.no_tasks_active,
+                    R.drawable.ic_check_circle_96dp, false
+                )
             }
             TasksFilterType.COMPLETED_TASKS -> {
-                setFilter(R.string.label_completed, R.string.no_tasks_completed,
-                    R.drawable.ic_verified_user_96dp, false)
+                setFilter(
+                    R.string.label_completed, R.string.no_tasks_completed,
+                    R.drawable.ic_verified_user_96dp, false
+                )
             }
         }
+        // Refresh list
+        loadTasks(false)
     }
 
-    private fun setFilter(@StringRes filteringLabelString: Int, @StringRes noTasksLabelString: Int,
-            @DrawableRes noTaskIconDrawable: Int, tasksAddVisible: Boolean) {
+    private fun setFilter(
+        @StringRes filteringLabelString: Int, @StringRes noTasksLabelString: Int,
+        @DrawableRes noTaskIconDrawable: Int, tasksAddVisible: Boolean
+    ) {
         _currentFilteringLabel.value = filteringLabelString
         _noTasksLabel.value = noTasksLabelString
         _noTaskIconRes.value = noTaskIconDrawable
@@ -127,8 +143,7 @@ class TasksViewModel(
     fun clearCompletedTasks() {
         viewModelScope.launch {
             tasksRepository.clearCompletedTasks()
-            _snackbarText.value = Event(R.string.completed_tasks_cleared)
-            loadTasks(false)
+            showSnackbarMessage(R.string.completed_tasks_cleared)
         }
     }
 
@@ -150,72 +165,69 @@ class TasksViewModel(
     }
 
     /**
-     * Called by the [TasksAdapter].
+     * Called by Data Binding.
      */
-    internal fun openTask(taskId: String) {
+    fun openTask(taskId: String) {
         _openTaskEvent.value = Event(taskId)
     }
 
     fun showEditResultMessage(result: Int) {
+        if (resultMessageShown) return
         when (result) {
-            EDIT_RESULT_OK -> _snackbarText.setValue(
-                Event(R.string.successfully_saved_task_message)
-            )
-            ADD_EDIT_RESULT_OK -> _snackbarText.setValue(
-                Event(R.string.successfully_added_task_message)
-            )
-            DELETE_RESULT_OK -> _snackbarText.setValue(
-                Event(R.string.successfully_deleted_task_message)
-            )
+            EDIT_RESULT_OK -> showSnackbarMessage(R.string.successfully_saved_task_message)
+            ADD_EDIT_RESULT_OK -> showSnackbarMessage(R.string.successfully_added_task_message)
+            DELETE_RESULT_OK -> showSnackbarMessage(R.string.successfully_deleted_task_message)
         }
-
+        resultMessageShown = true
     }
 
     private fun showSnackbarMessage(message: Int) {
         _snackbarText.value = Event(message)
     }
 
+    private fun filterTasks(tasksResult: Result<List<Task>>): LiveData<List<Task>> {
+        // TODO: This is a good case for liveData builder. Replace when stable.
+        val result = MutableLiveData<List<Task>>()
+
+        if (tasksResult is Success) {
+            isDataLoadingError.value = false
+            viewModelScope.launch {
+                result.value = filterItems(tasksResult.data, currentFiltering)
+            }
+        } else {
+            result.value = emptyList()
+            showSnackbarMessage(R.string.loading_tasks_error)
+            isDataLoadingError.value = true
+        }
+
+        return result
+    }
+
     /**
      * @param forceUpdate   Pass in true to refresh the data in the [TasksDataSource]
-     * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     fun loadTasks(forceUpdate: Boolean) {
+        _forceUpdate.value = forceUpdate
+    }
 
-        _dataLoading.value = true
-
-        // Espresso does not work well with coroutines yet. See
-        // https://github.com/Kotlin/kotlinx.coroutines/issues/982
-        EspressoIdlingResource.increment() // Set app as busy.
-
-        viewModelScope.launch {
-            val tasksResult = tasksRepository.getTasks(forceUpdate)
-
-            if (tasksResult is Success) {
-                val tasks = tasksResult.data
-
-                val tasksToShow = ArrayList<Task>()
-                // We filter the tasks based on the requestType
-                for (task in tasks) {
-                    when (_currentFiltering) {
-                        TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
-                        TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
-                            tasksToShow.add(task)
-                        }
-                        TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
-                            tasksToShow.add(task)
-                        }
+    private fun filterItems(tasks: List<Task>, filteringType: TasksFilterType): List<Task> {
+            val tasksToShow = ArrayList<Task>()
+            // We filter the tasks based on the requestType
+            for (task in tasks) {
+                when (filteringType) {
+                    TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
+                    TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
+                        tasksToShow.add(task)
+                    }
+                    TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
+                        tasksToShow.add(task)
                     }
                 }
-                isDataLoadingError.value = false
-                _items.value = ArrayList(tasksToShow)
-            } else {
-                isDataLoadingError.value = false
-                _items.value = emptyList()
-                _snackbarText.value = Event(R.string.loading_tasks_error)
             }
-
-            EspressoIdlingResource.decrement() // Set app as idle.
-            _dataLoading.value = false
+            return tasksToShow
         }
+
+    fun refresh() {
+        _forceUpdate.value = true
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (C) 2017 The Android Open Source Project
+  ~ Copyright (C) 2019 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,23 +14,23 @@
   ~ limitations under the License.
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
-        <import type="androidx.core.content.ContextCompat"/>
+        <import type="androidx.core.content.ContextCompat" />
 
         <variable
             name="viewmodel"
-            type="com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel"/>
+            type="com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel" />
 
     </data>
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
+        android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -39,25 +39,25 @@
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:onRefresh="@{viewmodel}"
+            app:onRefreshListener="@{viewmodel::refresh}"
             app:refreshing="@{viewmodel.dataLoading}">
 
             <RelativeLayout
-                android:id="@+id/tasksContainer"
+                android:id="@+id/tasks_container_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/tasksLL"
+                    android:id="@+id/tasks_linear_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}">
 
                     <TextView
-                        android:id="@+id/filteringLabel"
+                        android:id="@+id/filtering_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/list_item_padding"
@@ -66,17 +66,18 @@
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:gravity="center_vertical"
                         android:text="@{context.getString(viewmodel.currentFilteringLabel)}"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-                    <ListView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/tasks_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:items="@{viewmodel.items}"/>
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:items="@{viewmodel.items}" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/noTasks"
+                    android:id="@+id/no_tasks_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -84,33 +85,34 @@
                     android:visibility="@{viewmodel.empty ? View.VISIBLE : View.GONE}">
 
                     <ImageView
-                        android:id="@+id/noTasksIcon"
+                        android:id="@+id/no_tasks_icon"
                         android:layout_width="96dp"
                         android:layout_height="96dp"
                         android:layout_gravity="center"
-                        android:src="@{ContextCompat.getDrawable(context, viewmodel.noTaskIconRes)}"/>
+                        android:src="@{ContextCompat.getDrawable(context, viewmodel.noTaskIconRes)}"
+                        android:contentDescription="@string/no_tasks_image_content_description" />
 
                     <TextView
-                        android:id="@+id/noTasksMain"
+                        android:id="@+id/no_tasks_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="@dimen/list_item_padding"
-                        android:text="@{context.getString(viewmodel.noTasksLabel)}"/>
+                        android:text="@{context.getString(viewmodel.noTasksLabel)}" />
                 </LinearLayout>
             </RelativeLayout>
 
         </com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_task"
+            android:id="@+id/add_task_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_add"
             app:fabSize="normal"
             app:layout_anchor="@id/refresh_layout"
-            app:layout_anchorGravity="bottom|right|end"/>
+            app:layout_anchorGravity="bottom|right|end" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
 

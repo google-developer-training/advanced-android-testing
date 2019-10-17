@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.AddtaskFragBinding
-import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.tasks.ADD_EDIT_RESULT_OK
+import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.snackbar.Snackbar
 
@@ -36,12 +38,15 @@ class AddEditTaskFragment : Fragment() {
 
     private lateinit var viewDataBinding: AddtaskFragBinding
 
-    private lateinit var viewModel: AddEditTaskViewModel
+    private val args: AddEditTaskFragmentArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    private val viewModel by viewModels<AddEditTaskViewModel>()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val root = inflater.inflate(R.layout.addtask_frag, container, false)
-        viewModel = obtainViewModel(AddEditTaskViewModel::class.java)
         viewDataBinding = AddtaskFragBinding.bind(root).apply {
             this.viewmodel = viewModel
         }
@@ -54,13 +59,12 @@ class AddEditTaskFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setupSnackbar()
         setupNavigation()
-        loadData()
+        this.setupRefreshLayout(viewDataBinding.refreshLayout)
+        viewModel.start(args.taskId)
     }
 
     private fun setupSnackbar() {
-        viewDataBinding.viewmodel?.let {
-            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
-        }
+        view?.setupSnackbar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
     }
 
     private fun setupNavigation() {
@@ -69,16 +73,5 @@ class AddEditTaskFragment : Fragment() {
                 .actionAddEditTaskFragmentToTasksFragment(ADD_EDIT_RESULT_OK)
             findNavController().navigate(action)
         })
-    }
-
-    private fun loadData() {
-        // Add or edit an existing task?
-        viewDataBinding.viewmodel?.start(getTaskId())
-    }
-
-    private fun getTaskId(): String? {
-        return arguments?.let {
-            AddEditTaskFragmentArgs.fromBundle(it).TASKID
-        }
     }
 }
