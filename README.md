@@ -1,7 +1,11 @@
 # Android Testing Codelab
 
-This folder contains the source code for the Android testing codelab. It gives an introduction into testing on Android, including unit tests and UI tests.
-https://codelabs.developers.google.com/codelabs/android-testing/
+# This code is DEPRECATED
+
+The associated codelab and this code have been deprecated. Please use the following resources instead:
+* [Testing basics](https://codelabs.developers.google.com/codelabs/advanced-android-kotlin-training-testing-basics/index.html?index=..%2F..index#0)
+* [Introduction to Test Doubles and Dependency Injection](https://codelabs.developers.google.com/codelabs/advanced-android-kotlin-training-testing-test-doubles/#0)
+
 
 ### License
 
