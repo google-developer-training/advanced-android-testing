@@ -17,12 +17,7 @@
 package com.example.android.architecture.blueprints.todoapp.tasks
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -32,6 +27,7 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
+import com.example.android.architecture.blueprints.todoapp.util.getViewModelFactory
 import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -43,7 +39,7 @@ import timber.log.Timber
  */
 class TasksFragment : Fragment() {
 
-    private val viewModel by viewModels<TasksViewModel>()
+    private val viewModel by viewModels<TasksViewModel> { getViewModelFactory() }
 
     private val args: TasksFragmentArgs by navArgs()
 
@@ -52,8 +48,8 @@ class TasksFragment : Fragment() {
     private lateinit var listAdapter: TasksAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         viewDataBinding = TasksFragBinding.inflate(inflater, container, false).apply {
             viewmodel = viewModel
@@ -63,21 +59,21 @@ class TasksFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
-        when (item.itemId) {
-            R.id.menu_clear -> {
-                viewModel.clearCompletedTasks()
-                true
+            when (item.itemId) {
+                R.id.menu_clear -> {
+                    viewModel.clearCompletedTasks()
+                    true
+                }
+                R.id.menu_filter -> {
+                    showFilteringPopUpMenu()
+                    true
+                }
+                R.id.menu_refresh -> {
+                    viewModel.loadTasks(true)
+                    true
+                }
+                else -> false
             }
-            R.id.menu_filter -> {
-                showFilteringPopUpMenu()
-                true
-            }
-            R.id.menu_refresh -> {
-                viewModel.loadTasks(true)
-                true
-            }
-            else -> false
-        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.tasks_fragment_menu, menu)
@@ -118,11 +114,11 @@ class TasksFragment : Fragment() {
 
             setOnMenuItemClickListener {
                 viewModel.setFiltering(
-                    when (it.itemId) {
-                        R.id.active -> TasksFilterType.ACTIVE_TASKS
-                        R.id.completed -> TasksFilterType.COMPLETED_TASKS
-                        else -> TasksFilterType.ALL_TASKS
-                    }
+                        when (it.itemId) {
+                            R.id.active -> TasksFilterType.ACTIVE_TASKS
+                            R.id.completed -> TasksFilterType.COMPLETED_TASKS
+                            else -> TasksFilterType.ALL_TASKS
+                        }
                 )
                 true
             }
@@ -140,10 +136,10 @@ class TasksFragment : Fragment() {
 
     private fun navigateToAddNewTask() {
         val action = TasksFragmentDirections
-            .actionTasksFragmentToAddEditTaskFragment(
-                null,
-                resources.getString(R.string.add_task)
-            )
+                .actionTasksFragmentToAddEditTaskFragment(
+                        null,
+                        resources.getString(R.string.add_task)
+                )
         findNavController().navigate(action)
     }
 

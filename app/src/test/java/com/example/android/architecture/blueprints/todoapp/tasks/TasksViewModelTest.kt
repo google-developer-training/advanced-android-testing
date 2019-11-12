@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.source.FakeTaskRepository
 import getOrAwaitValue
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
@@ -16,7 +17,6 @@ import org.junit.Test
 
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class TasksViewModelTest {
 
     @get:Rule
@@ -26,18 +26,24 @@ class TasksViewModelTest {
 
     @Before
     fun setUp() {
-        tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
+        val fakeTaskRepository = FakeTaskRepository().apply {
+            val task1 = Task("Title1", "Desc1")
+            val task2 = Task("Title2", "Desc2", true)
+            val task3 = Task("Title3", "Desc3", true)
+            addTasks(task1, task2, task3)
+        }
+        tasksViewModel = TasksViewModel(fakeTaskRepository)
     }
 
     @Test
-    fun `add new task sets new task event`() {
+    fun `add new task sets new event in 'newTaskEvent'`() {
         tasksViewModel.addNewTask()
         val value = tasksViewModel.newTaskEvent.getOrAwaitValue()
         assertThat(value.getContentIfNotHandled(), notNullValue())
     }
 
     @Test
-    fun `set filter all tasks tasks add view visible`() {
+    fun `set filter 'ALL_TASKS' sets 'tasksAddViewVisible' to be true`() {
         tasksViewModel.setFiltering(TasksFilterType.ALL_TASKS)
         val value = tasksViewModel.tasksAddViewVisible.getOrAwaitValue()
         assertThat(value, `is`(true))
