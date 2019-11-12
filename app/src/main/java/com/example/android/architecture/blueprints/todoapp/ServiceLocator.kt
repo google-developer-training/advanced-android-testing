@@ -23,7 +23,7 @@ object ServiceLocator {
     }
 
     private fun createTasksRepository(context: Context): TasksRepository =
-            DefaultTasksRepository(createTaskLocalDataSource(context), TasksRemoteDataSource).also {
+            DefaultTasksRepository(TasksRemoteDataSource, createTaskLocalDataSource(context)).also {
                 tasksRepository = it
             }
 
