@@ -1,7 +1,7 @@
 ---
 name: Advanced Android Issue Template for Testing Codelab
 about: Report problems with Advanced Android in Kotlin Testing codelab
-title: ''
+title: "[Codelab Issue] Testing Codelab 5.#, Step # - Issue description"
 labels: ''
 assignees: ''
 
