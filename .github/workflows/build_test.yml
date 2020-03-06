@@ -5,8 +5,13 @@ on:
   push:
     branches: 
       - end_codelab_1
-        end_codelab_2
-        end_codelab_3
+      - end_codelab_2
+      - end_codelab_3
+  pull_request:
+    branches: 
+      - end_codelab_1
+      - end_codelab_2
+      - end_codelab_3
 
 jobs:
 
