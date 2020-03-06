@@ -1,0 +1,99 @@
+name: CI
+
+# push will execute any commits that are pushed to all branches
+on: 
+  push:
+    branches: 
+      - end_codelab_1
+      - end_codelab_2
+      - end_codelab_3
+  pull_request:
+    branches: 
+      - end_codelab_1
+      - end_codelab_2
+      - end_codelab_3
+
+jobs:
+
+  # 1 Build will compile APK, test APK and run tests, lint, etc.
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TERM: dumb
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+          
+    - name: Build and check
+      run: ./gradlew assembleDebug assembleDebugAndroidTest app:lintDebug testDebug --scan
+
+    - name: Upload build reports
+      if: always()
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-reports
+        path: app/build/reports
+
+    - name: Copy test results
+      if: always()
+      run: |
+        mkdir -p junit
+        find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
+        
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v1
+      with:
+        name: junit-results
+        path: junit
+      
+    - name: Upload app APK
+      uses: actions/upload-artifact@v1
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+        
+    - name: Upload Android Test APK
+      uses: actions/upload-artifact@v1
+      with:
+        name: app-debug-androidTest
+        path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+
+  # Upload APKs to FTL and run instrumented tests
+  firebase:
+    name: Run UI tests with Firebase Test Lab
+    needs: build
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Download app APK
+        uses: actions/download-artifact@v1
+        with:
+          name: app-debug
+
+      - name: Download Android test APK
+        uses: actions/download-artifact@v1
+        with:
+          name: app-debug-androidTest
+
+      - name: Login to Google Cloud
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '281.0.0'
+          service_account_key: ${{ secrets.FTL_KEY_BASE64 }}
+
+      - name: Set current project
+        run: gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
+
+      - name: Run Instrumentation Tests in Firebase Test Lab
+        run: gcloud firebase test android run --type instrumentation --app app-debug/app-debug.apk --test app-debug-androidTest/app-debug-androidTest.apk --device model=Pixel2,version=28,locale=pl,orientation=portrait
