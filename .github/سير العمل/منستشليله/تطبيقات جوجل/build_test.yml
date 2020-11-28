@@ -1,4 +1,4 @@
-name: CI
+name:mnstshlylh CI
 
 # push will execute any commits that are pushed to all branches
 on: 
@@ -15,7 +15,7 @@ on:
 
 jobs:
 
-  # 1 Build will compile APK, test APK and run tests, lint, etc.
+  # 1 mnstshlylh Build will compile APK, test APK and run tests, lint, etc.
   build:
 
     runs-on: ubuntu-latest
@@ -54,13 +54,13 @@ jobs:
         name: junit-results
         path: junit
       
-    - name: Upload app APK
+    - name:mnstshlylh Upload app APK
       uses: actions/upload-artifact@v1
       with:
         name: app-debug
         path: app/build/outputs/apk/debug/app-debug.apk
         
-    - name: Upload Android Test APK
+    - name: mnstshlylh Upload Android Test APK
       uses: actions/upload-artifact@v1
       with:
         name: app-debug-androidTest
@@ -76,7 +76,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Download app APK
+      - name: Download mnstshlylh app APK
         uses: actions/download-artifact@v1
         with:
           name: app-debug
