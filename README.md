@@ -43,6 +43,33 @@ Getting Started
 1. Download and run the app.
 2. Check out one of the codelabs mentioned above.
 
+Set up CI to forked
+-------------------
+
+### Firebase
+1. Add your project on [Firebase console](https://console.firebase.google.com/)
+2. Move to Project settings > Service accounts
+3. Generate new private key and download on local
+
+### Google Cloud Platform
+4. Enable Cloud Testing API on [Google Cloud Platform console](https://console.cloud.google.com/)
+5. Move to IAM
+6. Add role Editor to service account at step.3
+
+### GitHub
+7. Move to GitHub Repository Settings > Secrets
+8. New repository secret
+   - `FTL_KEY_BASE64` set value `cat　{downloaded-in-step3.json} | base64`
+   - `FIREBASE_PROJECT_ID` set value `{project-id-in-step1}`
+
+#### CI target branch
+**default**
+- end_codelab_1
+- end_codelab_2
+- end_codelab_3
+
+If you add target branch, add it to `branches` in `.github/workflows/build_test.yml`
+
 License
 -------
 
