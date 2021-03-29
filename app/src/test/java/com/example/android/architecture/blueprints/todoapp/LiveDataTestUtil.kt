@@ -53,7 +53,7 @@ fun <T> LiveData<T>.getOrAwaitValue(
             throw TimeoutException("LiveData value was never set.")
         }
 
-    } finally {
+    } catch(e: TimeoutException) {
         this.removeObserver(observer)
     }
 
