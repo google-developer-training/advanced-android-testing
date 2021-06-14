@@ -15,6 +15,7 @@
  */
 package com.example.android.architecture.blueprints.todoapp.data.source.remote
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
@@ -41,6 +42,7 @@ object TasksRemoteDataSource : TasksDataSource {
 
     private val observableTasks = MutableLiveData<Result<List<Task>>>()
 
+    @SuppressLint("NullSafeMutableLiveData")
     override suspend fun refreshTasks() {
         observableTasks.value = getTasks()
     }
