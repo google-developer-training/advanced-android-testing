@@ -80,7 +80,7 @@ class TaskDetailViewModel(
         }
     }
 
-    fun start(taskId: String?) {
+    fun start(taskId: String) {
         // If we're already loading or already loaded, return (might be a config change)
         if (_dataLoading.value == true || taskId == _taskId.value) {
             return
