@@ -25,6 +25,12 @@ android {
         enabled = true
         enabledForTests = true
     }
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
 }
 
 dependencies {
@@ -61,4 +67,8 @@ dependencies {
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+
+    //other
+    testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
+
 }
