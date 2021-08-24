@@ -9,6 +9,7 @@ import org.junit.Assert.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
@@ -17,6 +18,6 @@ class ExampleUnitTest {
 
     @Test
     fun multi_isCorrect(){
-        assertEquals(6,2*2)
+        assertEquals(6,2*3)
     }
 }
