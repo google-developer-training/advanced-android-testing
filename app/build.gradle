@@ -99,6 +99,5 @@ dependencies {
     androidTestImplementation "androidx.arch.core:core-testing:$archTestingVersion"
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
 }
