@@ -32,7 +32,7 @@ class StatisticsViewModel(
 ) : ViewModel() {
 
     private val tasks: LiveData<Result<List<Task>>> = tasksRepository.observeTasks()
-    private val _dataLoading = MutableLiveData<Boolean>(false)
+    private val _dataLoading = MutableLiveData(false)
     private val stats: LiveData<StatsResult?> = tasks.map {
         if (it is Success) {
             getActiveAndCompletedStats(it.data)

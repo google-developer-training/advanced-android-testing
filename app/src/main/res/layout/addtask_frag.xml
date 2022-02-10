@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -54,6 +55,7 @@
 
                     <EditText
                         android:id="@+id/add_task_title_edit_text"
+                        android:background="@null"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/title_hint"
@@ -61,16 +63,20 @@
                         android:maxLines="1"
                         android:text="@={viewmodel.title}"
                         android:textStyle="bold"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:importantForAutofill="no"
+                        tools:ignore="TextFields" />
 
                     <EditText
                         android:id="@+id/add_task_description_edit_text"
+                        android:background="@null"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:gravity="top"
                         android:hint="@string/description_hint"
                         android:imeOptions="flagNoExtractUi"
-                        android:text="@={viewmodel.description}" />
+                        android:text="@={viewmodel.description}"
+                        tools:ignore="Autofill,TextFields" />
 
                 </LinearLayout>
             </ScrollView>
@@ -85,6 +91,7 @@
             android:onClick="@{() -> viewmodel.saveTask()}"
             app:fabSize="normal"
             app:layout_anchor="@id/refresh_layout"
-            app:layout_anchorGravity="bottom|right|end" />
+            app:layout_anchorGravity="bottom|right|end"
+            tools:ignore="ContentDescription" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

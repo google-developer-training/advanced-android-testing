@@ -1,12 +1,12 @@
 buildscript {
     ext.kotlinVersion = '1.6.10'
-    ext.navigationVersion = '2.3.5'
+    ext.navigationVersion = '2.4.1'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.0'
+        classpath 'com.android.tools.build:gradle:7.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
 
@@ -26,7 +26,7 @@ allprojects {
 ext {
     // Sdk and tools
     minSdkVersion = 21
-    targetSdkVersion = 31
+    targetSdkVersion = 32
     compileSdkVersion = 31
 
     // App dependencies

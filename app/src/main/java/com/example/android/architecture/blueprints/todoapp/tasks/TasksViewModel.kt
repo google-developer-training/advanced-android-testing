@@ -34,7 +34,7 @@ class TasksViewModel(
     private val tasksRepository: TasksRepository
 ) : ViewModel() {
 
-    private val _forceUpdate = MutableLiveData<Boolean>(false)
+    private val _forceUpdate = MutableLiveData(false)
 
     private val _items: LiveData<List<Task>> = _forceUpdate.switchMap { forceUpdate ->
         if (forceUpdate) {
