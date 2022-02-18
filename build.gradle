@@ -48,4 +48,7 @@ ext {
     rulesVersion = '1.0.1'
     swipeRefreshLayoutVersion = '1.1.0'
     timberVersion = '4.7.1'
+    hamcrestVersion = '1.3'
+    robolectricVersion = '4.7'
+    archTestingVersion = '2.1.0'
 }
