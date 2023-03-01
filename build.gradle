@@ -49,4 +49,6 @@ ext {
     swipeRefreshLayoutVersion = '1.1.0'
     timberVersion = '4.7.1'
     hamcrestVersion = '2.2'
+    robolectricVersion = '4.5.1'
+    testRunnerVersion = '1.5.2'
 }
