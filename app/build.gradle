@@ -109,5 +109,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.9'
 
+    //To use InstantTaskExecutorRule
+    testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
+
 
 }
