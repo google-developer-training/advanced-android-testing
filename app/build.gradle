@@ -112,5 +112,8 @@ dependencies {
     //To use InstantTaskExecutorRule
     testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
 
+    // test with coroutines
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
 
 }
