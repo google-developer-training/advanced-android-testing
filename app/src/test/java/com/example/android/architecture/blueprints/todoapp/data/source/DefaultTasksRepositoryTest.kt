@@ -5,6 +5,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
 import org.junit.Before
@@ -19,7 +20,8 @@ class DefaultTasksRepositoryTest{
     private val task3 = Task("Title3", "Description3")
     private val remoteTasks = listOf(task1, task2).sortedBy { it.id }
     private val localTasks = listOf(task3).sortedBy { it.id }
-    private val newTasks = listOf(task3).sortedBy { it.id }
+    private val newTasks = listOf(task2,task3).sortedBy { it.id }
+
 
     private lateinit var tasksRemoteDataSource: FakeDataSource
     private lateinit var tasksLocalDataSource: FakeDataSource
@@ -45,6 +47,15 @@ class DefaultTasksRepositoryTest{
 
         val tasks = tasksRepository.getTasks(true) as Result.Success
         assertThat(tasks.data, IsEqual(remoteTasks))
+
+    }
+
+    @Test
+    fun deleteTask_requestsAllTasksFromRemoteDataSource() = runTest {
+
+        val tasks = tasksRepository.getTasks() as Result.Success
+        tasksRepository.deleteAllTasks()
+        assertThat(tasks.data.size, `is` (0))
 
     }
 }
