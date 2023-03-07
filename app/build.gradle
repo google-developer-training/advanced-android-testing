@@ -52,6 +52,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'junit:junit:4.12'
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'junit:junit:4.12'
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
@@ -89,9 +90,6 @@ dependencies {
     // Kotlin extensions for androidx.test.core
     androidTestImplementation "androidx.test:core-ktx:1.5.0"
 
-    // To use the androidx.test.espresso
-    androidTestImplementation "androidx.test:espresso:espresso-core:3.5.1"
-
     // To use the JUnit Extension APIs
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
     // Kotlin extensions for androidx.test.ext.junit
@@ -114,6 +112,16 @@ dependencies {
 
     // test with coroutines
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
+    // Dependencies for Android instrumented unit tests
+    androidTestImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
+    // Testing code should not be included in the main code.
+    // Once https://issuetracker.google.com/128612536 is fixed this can be fixed.
+
+    debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+    implementation "androidx.test:core:$androidXTestCoreVersion"
 
 
 }

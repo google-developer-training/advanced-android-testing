@@ -52,4 +52,5 @@ ext {
     robolectricVersion = '4.5.1'
     testRunnerVersion = '1.5.2'
     archTestingVersion = '2.2.0'
+    fragmentVersion = '1.5.5'
 }
