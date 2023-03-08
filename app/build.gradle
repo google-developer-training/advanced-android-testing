@@ -48,11 +48,12 @@ dependencies {
     // Architecture Components
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'junit:junit:4.12'
+    implementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'junit:junit:4.13.2'
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
@@ -105,7 +106,7 @@ dependencies {
     androidTestUtil "androidx.test:orchestrator:1.4.2"
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.robolectric:robolectric:4.9'
+    testImplementation 'org.robolectric:robolectric:4.9.2'
 
     //To use InstantTaskExecutorRule
     testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
@@ -122,6 +123,11 @@ dependencies {
 
     debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
     implementation "androidx.test:core:$androidXTestCoreVersion"
+
+    // Dependencies for Android instrumented unit tests
+    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
+
+    androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexMakerVersion"
 
 
 }
