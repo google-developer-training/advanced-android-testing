@@ -16,6 +16,7 @@
 
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -28,7 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-@Config(sdk = [30]) // https://github.com/robolectric/robolectric/pull/6776
+@Config(sdk = [Build.VERSION_CODES.S]) // https://github.com/robolectric/robolectric/pull/6776
 @RunWith(AndroidJUnit4::class)
 class TasksViewModelTest {
 

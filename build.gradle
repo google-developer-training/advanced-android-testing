@@ -48,7 +48,7 @@ ext {
     junitVersion = '4.13.2'
     materialVersion = '1.4.0'
     recyclerViewVersion = '1.2.1'
-    robolectricVersion = '4.5.1'
+    robolectricVersion = '4.7.3'
     roomVersion = '2.3.0'
     rulesVersion = '1.0.1'
     swipeRefreshLayoutVersion = '1.1.0'
