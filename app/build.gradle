@@ -52,6 +52,7 @@ dependencies {
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"
+    testImplementation "com.google.truth:truth:1.1.2"
 
     // AndroidX Test - Instrumented testing
     androidTestImplementation "androidx.test.ext:junit:$androidXTestExtKotlinRunnerVersion"
