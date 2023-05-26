@@ -3,8 +3,11 @@ package com.example.android.architecture.blueprints.todoapp.statistics
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.google.common.truth.Truth
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 
+@RunWith(JUnit4::class)
 internal class StatisticsUtilsTest {
 
 
