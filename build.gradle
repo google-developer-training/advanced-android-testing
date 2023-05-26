@@ -50,4 +50,5 @@ ext {
     robolectricVersion = '4.10.3'
     swipeRefreshLayoutVersion = '1.1.0'
     timberVersion = '4.7.1'
+    archTestingVersion = '2.1.0'
 }
