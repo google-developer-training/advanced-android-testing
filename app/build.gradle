@@ -33,6 +33,10 @@ android {
         enabled = true
         enabledForTests = true
     }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
 }
 
 dependencies {
@@ -70,8 +74,15 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
 
     // AndroidX Test - Instrumented testing
-    androidTestImplementation "androidx.test.ext:junit:$androidXTestExtKotlinRunnerVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    debugImplementation "androidx.test.ext:junit:$androidXTestExtKotlinRunnerVersion"
+    debugImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+
+    // Dependencies for Android instrumented unit tests
+    debugImplementation "junit:junit:$junitVersion"
+    debugImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
+    debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+    debugImplementation "androidx.test:core:$androidXTestCoreVersion"
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"

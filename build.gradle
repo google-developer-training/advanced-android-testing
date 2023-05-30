@@ -51,4 +51,5 @@ ext {
     swipeRefreshLayoutVersion = '1.1.0'
     timberVersion = '4.7.1'
     archTestingVersion = '2.1.0'
+    fragmentVersion = '1.1.0-alpha07'
 }
