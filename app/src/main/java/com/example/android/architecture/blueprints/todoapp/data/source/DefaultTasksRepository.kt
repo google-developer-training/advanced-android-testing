@@ -41,13 +41,16 @@ class DefaultTasksRepository(
 
         fun getRepository(app: Application): DefaultTasksRepository {
             return INSTANCE ?: synchronized(this) {
-                val database =
-                    Room.databaseBuilder(app, ToDoDatabase::class.java, "Tasks.db").build()
-                DefaultTasksRepository(
-                    TasksRemoteDataSource,
-                    TasksLocalDataSource(database.taskDao())
-                ).also {
-                    INSTANCE = it
+                // Double check for thread race condition
+                INSTANCE ?: kotlin.run {
+                    val database =
+                        Room.databaseBuilder(app, ToDoDatabase::class.java, "Tasks.db").build()
+                    DefaultTasksRepository(
+                        TasksRemoteDataSource,
+                        TasksLocalDataSource(database.taskDao())
+                    ).also {
+                        INSTANCE = it
+                    }
                 }
             }
         }
