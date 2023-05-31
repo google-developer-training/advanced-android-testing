@@ -1,20 +1,14 @@
 package com.example.android.architecture.blueprints.todoapp.tasks
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeDefaultTasksRepository
-import com.example.android.architecture.blueprints.todoapp.data.source.IDefaultTasksRepository
 import com.google.common.truth.Truth
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
- 
+
 internal class TasksViewModelTest {
 
     @get:Rule
@@ -30,7 +24,7 @@ internal class TasksViewModelTest {
         val task2 = Task("Title2", "Description2", true)
         val task3 = Task("Title3", "Description3", true)
         tasksRepository = FakeDefaultTasksRepository()
-        tasksRepository.addTask(task1, task2, task3)
+        tasksRepository.addTasks(task1, task2, task3)
 
         tasksViewModel = TasksViewModel(tasksRepository)
     }

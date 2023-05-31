@@ -77,12 +77,12 @@ class FakeDefaultTasksRepository : IDefaultTasksRepository {
     override suspend fun getTaskWithId(id: String): Result<Task> {
         TODO("Not yet implemented")
     }
-
+ 
     override suspend fun saveTask(task: Task) {
         TODO("Not yet implemented")
     }
 
-    fun addTask(vararg tasks: Task) {
+    fun addTasks(vararg tasks: Task) {
         tasks.forEach { task ->
             tasksData[task.id] = task
         }
