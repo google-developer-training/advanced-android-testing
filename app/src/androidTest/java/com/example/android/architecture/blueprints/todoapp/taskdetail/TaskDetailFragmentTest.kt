@@ -21,6 +21,7 @@ internal class TaskDetailFragmentTest {
         val bundle = TaskDetailFragmentArgs(activeTask.id).toBundle()
         launchFragmentInContainer<TaskDetailFragment>(bundle, R.style.AppTheme)
 
+        Thread.sleep(5000)
         // Assert
         val value = true
     }
