@@ -37,4 +37,6 @@ interface IDefaultTasksRepository {
     suspend fun deleteTask(taskId: String)
 
     suspend fun getTaskWithId(id: String): Result<Task>
+
+    suspend fun saveTask(task: Task)
 }
