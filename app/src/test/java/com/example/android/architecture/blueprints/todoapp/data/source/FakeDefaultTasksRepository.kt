@@ -77,7 +77,7 @@ class FakeDefaultTasksRepository : IDefaultTasksRepository {
     override suspend fun getTaskWithId(id: String): Result<Task> {
         TODO("Not yet implemented")
     }
- 
+
     override suspend fun saveTask(task: Task) {
         TODO("Not yet implemented")
     }
