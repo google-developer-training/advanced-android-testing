@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion = '1.5.31'
+    ext.kotlinVersion = '1.6.0'
     ext.navigationVersion = '2.3.5'
     repositories {
         google()
@@ -27,7 +27,7 @@ ext {
     // Sdk and tools
     minSdkVersion = 21
     targetSdkVersion = 31
-    compileSdkVersion = 31
+    compileSdkVersion = 33
 
     // App dependencies
     androidXVersion = '1.0.0'
@@ -44,7 +44,7 @@ ext {
     junitVersion = '4.13.2'
     materialVersion = '1.4.0'
     recyclerViewVersion = '1.2.1'
-    roomVersion = '2.3.0'
+    roomVersion = '2.5.1'
     rulesVersion = '1.0.1'
     swipeRefreshLayoutVersion = '1.1.0'
     timberVersion = '4.7.1'
