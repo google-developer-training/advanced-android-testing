@@ -23,7 +23,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -58,7 +58,7 @@ class TasksDaoTest {
     fun closeDb() = database.close()
 
     @Test
-    fun insertTaskAndGetById() = runBlockingTest {
+    fun insertTaskAndGetById() = runTest {
         // GIVEN - insert a task
         val task = Task("title", "description")
         database.taskDao().insertTask(task)
@@ -75,7 +75,7 @@ class TasksDaoTest {
     }
 
     @Test
-    fun updateTaskAndGetById() = runBlockingTest {
+    fun updateTaskAndGetById() = runTest {
         // When inserting a task
         val originalTask = Task("title", "description")
         database.taskDao().insertTask(originalTask)

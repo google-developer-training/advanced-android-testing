@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-kapt' // For DataBinding
+apply plugin: 'com.google.devtools.ksp'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdk rootProject.compileSdkVersion
+    namespace "com.example.android.architecture.blueprints.todoapp"
 
     defaultConfig {
         applicationId "com.example.android.architecture.blueprints.reactive"
@@ -21,8 +23,11 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+        dataBinding = true
+    }
     dataBinding {
-        enabled = true
         enabledForTests = true
     }
 
@@ -31,7 +36,13 @@ android {
         includeAndroidResources = true
         returnDefaultValues = true
     }
-
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     packagingOptions {
         exclude 'META-INF/AL2.0'
         exclude 'META-INF/LGPL2.1'
@@ -50,15 +61,15 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timberVersion"
     implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // Architecture Components
     implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archLifecycleVersion"
-    kapt "androidx.lifecycle:lifecycle-compiler:$archLifecycleVersion"
+    ksp "androidx.lifecycle:lifecycle-compiler:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archLifecycleVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"

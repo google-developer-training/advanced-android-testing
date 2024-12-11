@@ -35,7 +35,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeAndroidTestRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -61,7 +61,7 @@ class TasksFragmentTest {
     }
 
     @After
-    fun cleanupDb() = runBlockingTest {
+    fun cleanupDb() = runTest {
         ServiceLocator.resetRepository()
     }
 
@@ -86,7 +86,7 @@ class TasksFragmentTest {
     }
 
     @Test
-    fun clickTask_navigateToDetailFragmentOne() = runBlockingTest {
+    fun clickTask_navigateToDetailFragmentOne() = runTest {
         repository.saveTask(Task("TITLE1", "DESCRIPTION1", false, "id1"))
         repository.saveTask(Task("TITLE2", "DESCRIPTION2", true, "id2"))
 

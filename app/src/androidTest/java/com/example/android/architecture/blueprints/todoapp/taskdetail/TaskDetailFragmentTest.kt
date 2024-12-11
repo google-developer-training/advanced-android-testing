@@ -30,7 +30,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeAndroidTestRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.core.IsNot.not
 import org.junit.After
 import org.junit.Before
@@ -54,12 +54,12 @@ class TaskDetailFragmentTest {
     }
 
     @After
-    fun cleanupDb() = runBlockingTest {
+    fun cleanupDb() = runTest {
         ServiceLocator.resetRepository()
     }
 
     @Test
-    fun activeTaskDetails_DisplayedInUi() = runBlockingTest{
+    fun activeTaskDetails_DisplayedInUi() = runTest{
         // GIVEN - Add active (incomplete) task to the DB
         val activeTask = Task("Active Task", "AndroidX Rocks", false)
         repository.saveTask(activeTask)
@@ -80,7 +80,7 @@ class TaskDetailFragmentTest {
     }
 
     @Test
-    fun completedTaskDetails_DisplayedInUi() = runBlockingTest{
+    fun completedTaskDetails_DisplayedInUi() = runTest{
         // GIVEN - Add completed task to the DB
         val completedTask = Task("Completed Task", "AndroidX Rocks", true)
         repository.saveTask(completedTask)
