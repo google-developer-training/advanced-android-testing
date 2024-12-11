@@ -5,6 +5,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
+    namespace "com.example.android.architecture.blueprints"
 
     defaultConfig {
         applicationId "com.example.android.architecture.blueprints.reactive"
