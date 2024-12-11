@@ -1,12 +1,12 @@
 buildscript {
-    ext.kotlinVersion = '1.5.31'
-    ext.navigationVersion = '2.3.5'
+    ext.kotlinVersion = '2.1.0'
+    ext.navigationVersion = '2.8.4'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:8.7.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
 
@@ -31,29 +31,29 @@ ext {
 
     // App dependencies
     androidXVersion = '1.0.0'
-    androidXTestCoreVersion = '1.4.0'
-    androidXTestExtKotlinRunnerVersion = '1.1.3'
+    androidXTestCoreVersion = '1.6.1'
+    androidXTestExtKotlinRunnerVersion = '1.2.1'
     androidXTestRulesVersion = '1.2.0'
-    androidXAnnotations = '1.3.0'
-    appCompatVersion = '1.4.0'
-    archLifecycleVersion = '2.4.0'
-    archTestingVersion = '2.1.0'
+    androidXAnnotations = '1.9.1'
+    appCompatVersion = '1.7.0'
+    archLifecycleVersion = '2.8.7'
+    archTestingVersion = '2.2.0'
     coroutinesVersion = '1.5.2'
     cardVersion = '1.0.0'
-    coroutinesVersion = '1.5.0'
-    dexMakerVersion = '2.28.1'
-    espressoVersion = '3.4.0'
-    fragmentVersion = '1.4.0'
+    coroutinesVersion = '1.9.0'
+    dexMakerVersion = '2.28.4'
+    espressoVersion = '3.6.1'
+    fragmentVersion = '1.8.5'
     hamcrestVersion = '1.3'
     junitVersion = '4.13.2'
-    materialVersion = '1.4.0'
-    mockitoVersion = '2.8.9'
+    materialVersion = '1.12.0'
+    mockitoVersion = '5.14.2'
     multiDexVersion = '2.0.1'
-    recyclerViewVersion = '1.2.1'
-    robolectricVersion = '4.5.1'
-    roomVersion = '2.3.0'
+    recyclerViewVersion = '1.3.2'
+    robolectricVersion = '4.14.1'
+    roomVersion = '2.6.1'
     rulesVersion = '1.0.1'
     swipeRefreshLayoutVersion = '1.1.0'
-    timberVersion = '4.7.1'
+    timberVersion = '5.0.1'
     truthVersion = '1.1.2'
 }
