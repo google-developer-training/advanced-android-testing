@@ -73,7 +73,7 @@ class TasksLocalDataSourceTest {
     }
 
     // runBlocking used here because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
-    // TODO replace with runBlockingTest once issue is resolved
+    // TODO replace with runTest once issue is resolved
     @Test
     fun saveTask_retrievesTask() = runBlocking {
         // GIVEN - a new task saved in the database
