@@ -1,0 +1,61 @@
+[versions]
+
+minSdkVersion = "21"
+targetSdkVersion = "34"
+compileSdkVersion = "34"
+
+agpVersion = "8.2.2"
+javaVersion = "1.8"
+kotlinVersion = "1.9.23"
+kspVersion = "1.9.23-1.0.20"
+navigationVersion = "2.7.7"
+
+androidXVersion = "1.0.0"
+androidXTestCoreVersion = "1.3.0"
+androidXTestExtKotlinRunnerVersion = "1.1.5"
+androidXTestRulesVersion = "1.2.0"
+androidXAnnotations = "1.7.1"
+appCompatVersion = "1.6.1"
+archLifecycleVersion = "2.7.0"
+coroutinesVersion = "1.8.0"
+cardVersion = "1.0.0"
+espressoVersion = "3.5.1"
+fragmentKtxVersion = "1.6.2"
+junitVersion = "4.13.2"
+materialVersion = "1.11.0"
+recyclerViewVersion = "1.3.2"
+roomVersion = "2.6.1"
+rulesVersion = "1.0.1"
+swipeRefreshLayoutVersion = "1.1.0"
+timberVersion = "5.0.1"
+
+[libraries]
+
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompatVersion" }
+androidx-annotations = { module = "androidx.annotation:annotation", version.ref = "androidXAnnotations" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoVersion" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtxVersion" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidXTestExtKotlinRunnerVersion" }
+androidx-lifecycle-commonJava8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "archLifecycleVersion" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "archLifecycleVersion" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "archLifecycleVersion" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationVersion" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationVersion" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerViewVersion" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swipeRefreshLayoutVersion" }
+junit = { module = "junit:junit", version.ref = "junitVersion" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinVersion" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
+material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
+
+[plugins]
+
+androidApplication = { id = "com.android.application", version.ref = "agpVersion" }
+androidxSafeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationVersion" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
+kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlinVersion" }
+googleKsp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
